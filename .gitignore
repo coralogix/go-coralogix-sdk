@@ -1,0 +1,10 @@
+.DS_Store
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+.idea/
+*.iml
+coverage.txt
