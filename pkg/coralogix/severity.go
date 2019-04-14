@@ -1,4 +1,4 @@
-package go_coralogix_sdk
+package coralogix
 
 // SeveritiesList describe logs levels values
 type SeveritiesList struct {

@@ -1,4 +1,4 @@
-package go_coralogix_sdk
+package coralogix
 
 // Credentials is the container for Coralogix data
 type Credentials struct {

@@ -15,14 +15,16 @@ before_script:
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 script:
-  - go test -race -coverprofile=coverage.txt -covermode=atomic ./...
+  - go test -v -coverprofile=coverage.txt -covermode=atomic ./...
 after_script:
+  - ./cc-test-reporter format-coverage --input-type gocov coverage.txt
+  - ./cc-test-reporter upload-coverage
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 notifications:
   slack:
-    secure: ""
+    secure: "ci+MGqS8vmghdaKYr7M2wF7RUbOMVlDE2HGMCwImSbkvTtDROmXdCNv9Kbe0/kpdmmZNjOjdv7NZyky9Hquy8wtttnTxue4No7ZBM5+1SdM0gMAgVmX6xNOANnfnIdhbLG+mC9qbWG7MMRzgQqjwKvXoeVN1WjW2zjk7FAHoeXrseIUCX/yllUCSJpyPf/qpAeEFU8TN5g7WzRUGHY9Fyhe7/WT/oCYqCiERsabz9aiVKBjW2zVcSRV1YLtw/R+8MKM2T9Xu0YInqYep42aPzKp2s1lOc5Xk+Jr6UHGcmOzApHyDfIiolJoIjN4JjPye8rGdnevkcBntr3k4f9fh6GHZrK2qp5qNMHJdjcfDeH0Dvr0fCrzALG0KLFJYQ2lVE3v8J0LPtpR+hzolT55PJu4TT9ZyXas0VHTwVO+higLr8iBT/Oejw7GzsvEsN01CTTBO69Qm0rxGZ36REZ7Y+U+IbCVRjF1z6eX/JB/IUpKPYiIMR00u4wGjcE8RaC2kIrJ8Qu9PXdmT72fAeaswJyTURhTBPssgaC2iuaLc53qhCtooNcwWP2dlvfTNi8VONY1D5XW2HdoM3PzBB/PmTQqIdgqTpW1ZDmmNcZMht5H16zjL6w7D0bUmv8W5iHAP0XKuHii5EfED6LS8aKVpm3BI9tsaBQKHwRe4O+SFXD8="
   email:
     recipients:
       - eldar@coralogix.com

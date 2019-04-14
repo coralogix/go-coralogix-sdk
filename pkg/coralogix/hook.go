@@ -1,4 +1,4 @@
-package go_coralogix_sdk
+package coralogix
 
 import (
 	"github.com/sirupsen/logrus"

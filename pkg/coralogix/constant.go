@@ -1,4 +1,4 @@
-package go_coralogix_sdk
+package coralogix
 
 const (
 	MaxLogBufferSize        uint64  = 128 * (1024 * 1024)                         // Maximum log buffer size (default=128MiB)

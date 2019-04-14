@@ -1,9 +1,4 @@
 /*
-Copyright 2019 Coralogix Ltd. All rights reserved.
-Use of this source code is governed by a Apache 2.0
-license that can be found in the LICENSE file.
-
-
 Package coralogix provides SDK for sending logs to Coralogix.
 
 
@@ -72,5 +67,10 @@ func main() {
 
 
 For a source watch https://github.com/coralogix/go-coralogix-sdk
+
+
+Copyright 2019 Coralogix Ltd. All rights reserved.
+Use of this source code is governed by a Apache 2.0
+license that can be found in the LICENSE file.
 */
-package go_coralogix_sdk
+package coralogix
