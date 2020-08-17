@@ -1,4 +1,4 @@
-module github.com/coralogix/go-coralogix-sdk
+module github.com/ap-in-git/go-coralogix-sdk
 
 go 1.14
 
