@@ -1,4 +1,4 @@
-package coralogix
+	package coralogix
 
 import (
 	"encoding/json"

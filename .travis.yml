@@ -1,7 +1,7 @@
 dist: trusty
 sudo: required
 language: go
-go_import_path: github.com/coralogix/go-coralogix-sdk
+go_import_path: github.com/ap-in-git/go-coralogix-sdk
 git:
   depth: 1
 go:
