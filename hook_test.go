@@ -18,6 +18,7 @@ func TestHook_Send(t *testing.T) {
 	defer CoralogixHook.Close()
 
 	log := logrus.New()
+	log.SetReportCaller(true)
 	log.SetLevel(logrus.TraceLevel)
 
 	log.AddHook(CoralogixHook)

@@ -64,14 +64,14 @@ func (hook *Hook) Fire(entry *logrus.Entry) error {
 		ClassName = Value.(string)
 		delete(entry.Data, "ClassName")
 	} else {
-		ClassName = ""
+		ClassName = entry.Caller.File
 	}
 
 	if Value, Exist := entry.Data["MethodName"]; Exist {
 		MethodName = Value.(string)
 		delete(entry.Data, "MethodName")
 	} else {
-		MethodName = ""
+		MethodName = entry.Caller.Function
 	}
 
 	if Value, Exist := entry.Data["ThreadId"]; Exist {
