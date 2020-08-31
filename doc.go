@@ -4,29 +4,29 @@ Package coralogix provides SDK for sending logs to Coralogix.
 
 The simple example:
 
-	package main
+    package main
 
-	import (
-		coralogix "github.com/coralogix/go-coralogix-sdk"
-	)
+    import (
+        coralogix "github.com/coralogix/go-coralogix-sdk"
+    )
 
-	func main() {
-		coralogix.SetDebug(true)
+    func main() {
+        coralogix.SetDebug(true)
 
-		logger := coralogix.NewCoralogixLogger(
-			"YOUR_PRIVATE_KEY_HERE",
-			"YOUR_APPLICATION_NAME",
-			"YOUR_SUBSYSTEM_NAME",
-		)
-		defer logger.Destroy()
+        logger := coralogix.NewCoralogixLogger(
+            "YOUR_PRIVATE_KEY_HERE",
+            "YOUR_APPLICATION_NAME",
+            "YOUR_SUBSYSTEM_NAME",
+        )
+        defer logger.Destroy()
 
-		logger.Debug("Test message 1")
-		logger.Info(map[string]string{
-			"text":  "Test message 2",
-			"extra": "additional",
-		})
-		logger.Warning("Test message 4")
-	}
+        logger.Debug("Test message 1")
+        logger.Info(map[string]string{
+            "text":  "Test message 2",
+            "extra": "additional",
+        })
+        logger.Warning("Test message 4")
+    }
 
 
 If you want to use Coralogix SDK with Logrus logging library:
@@ -34,35 +34,35 @@ If you want to use Coralogix SDK with Logrus logging library:
 package main
 
 import (
-	coralogix "github.com/coralogix/go-coralogix-sdk"
-	"github.com/sirupsen/logrus"
+    coralogix "github.com/coralogix/go-coralogix-sdk"
+    "github.com/sirupsen/logrus"
 )
 
 func main() {
-	CoralogixHook := coralogix.NewCoralogixHook(
-		"YOUR_PRIVATE_KEY_HERE",
-		"YOUR_APPLICATION_NAME",
-		"YOUR_SUBSYSTEM_NAME",
-	)
-	defer CoralogixHook.Close()
+    CoralogixHook := coralogix.NewCoralogixHook(
+        "YOUR_PRIVATE_KEY_HERE",
+        "YOUR_APPLICATION_NAME",
+        "YOUR_SUBSYSTEM_NAME",
+    )
+    defer CoralogixHook.Close()
 
-	log := logrus.New()
-	log.SetLevel(logrus.DebugLevel)
+    log := logrus.New()
+    log.SetLevel(logrus.DebugLevel)
 
-	log.AddHook(CoralogixHook)
+    log.AddHook(CoralogixHook)
 
-	log.Info("Test message!")
-	log.WithFields(logrus.Fields{
-		"Category":   "MyCategory",
-		"ClassName":  "MyClassName",
-		"MethodName": "MyMethodName",
-		"ThreadId":   "MyThreadId",
-	}).Info("Test message 2!")
-	log.WithFields(logrus.Fields{
-		"extra": "additional",
-	}).Info("Test message 3!")
-	log.Debug("Test message 4!")
-	log.Fatal("Test message 5!")
+    log.Info("Test message!")
+    log.WithFields(logrus.Fields{
+        "Category":   "MyCategory",
+        "ClassName":  "MyClassName",
+        "MethodName": "MyMethodName",
+        "ThreadId":   "MyThreadId",
+    }).Info("Test message 2!")
+    log.WithFields(logrus.Fields{
+        "extra": "additional",
+    }).Info("Test message 3!")
+    log.Debug("Test message 4!")
+    log.Fatal("Test message 5!")
 }
 
 
