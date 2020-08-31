@@ -1,7 +1,6 @@
 package coralogix
 
 import (
-	"os"
 	"reflect"
 	"testing"
 	"time"
@@ -42,14 +41,6 @@ func TestBulk_ToJSONFail(t *testing.T) {
 	if RecordsBulk.ToJSON() != nil {
 		t.Error("Error while catching JSON converting error!")
 	}
-}
-
-func GetEnv(Key string, DefaultValue string) string {
-	Value := os.Getenv(Key)
-	if len(Value) == 0 {
-		return DefaultValue
-	}
-	return Value
 }
 
 func CreateBulk() *Bulk {
