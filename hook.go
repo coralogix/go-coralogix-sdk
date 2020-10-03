@@ -49,8 +49,8 @@ func NewCoralogixHook(PrivateKey string, ApplicationName string, SubsystemName s
 func extractError(entry *logrus.Entry) {
     if entry != nil && entry.Data != nil{
         for key, val := range entry.Data {
-            e:=val.(error)
-            if e != nil {
+            switch e := val.(type) {
+            case error:
                 entry.Data[key] = e.Error()
             }
         }
