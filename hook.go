@@ -33,7 +33,7 @@ func (hook *Hook) Fire(entry *logrus.Entry) error {
 		Category   string
 		ClassName  string
 		MethodName string
-		ThreadId   string
+		ThreadID   string
 	)
 
 	switch entry.Level {
@@ -64,21 +64,29 @@ func (hook *Hook) Fire(entry *logrus.Entry) error {
 		ClassName = Value.(string)
 		delete(entry.Data, "ClassName")
 	} else {
-		ClassName = ""
+		if entry.HasCaller() {
+			ClassName = entry.Caller.File
+		} else {
+			ClassName = ""
+		}
 	}
 
 	if Value, Exist := entry.Data["MethodName"]; Exist {
 		MethodName = Value.(string)
 		delete(entry.Data, "MethodName")
 	} else {
-		MethodName = ""
+		if entry.HasCaller() {
+			MethodName = entry.Caller.Function
+		} else {
+			MethodName = ""
+		}
 	}
 
 	if Value, Exist := entry.Data["ThreadId"]; Exist {
-		ThreadId = Value.(string)
+		ThreadID = Value.(string)
 		delete(entry.Data, "ThreadId")
 	} else {
-		ThreadId = ""
+		ThreadID = ""
 	}
 
 	if len(entry.Data) > 0 {
@@ -99,7 +107,7 @@ func (hook *Hook) Fire(entry *logrus.Entry) error {
 			Category,
 			ClassName,
 			MethodName,
-			ThreadId,
+			ThreadID,
 		},
 	)
 

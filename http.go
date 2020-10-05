@@ -11,13 +11,13 @@ import (
 // SendRequest send logs data to Coralogix server
 func SendRequest(Bulk *Bulk) int {
 	client := &http.Client{
-		Timeout: time.Duration(time.Duration(HttpTimeout) * time.Second),
+		Timeout: time.Duration(time.Duration(HTTPTimeout) * time.Second),
 	}
 
-	for Attempt := 1; uint(Attempt) <= HttpSendRetryCount; Attempt++ {
+	for Attempt := 1; uint(Attempt) <= HTTPSendRetryCount; Attempt++ {
 		DebugLogger.Println("About to send bulk to Coralogix server. Attempt number:", Attempt)
 
-		response, err := client.Post(LogUrl, "application/json", bytes.NewBuffer(Bulk.ToJSON()))
+		response, err := client.Post(LogURL, "application/json", bytes.NewBuffer(Bulk.ToJSON()))
 
 		if err != nil {
 			DebugLogger.Println("Can't execute HTTP request:", err)
@@ -31,7 +31,7 @@ func SendRequest(Bulk *Bulk) int {
 			return response.StatusCode
 		}
 
-		time.Sleep(time.Duration(HttpSendRetryInterval) * time.Second)
+		time.Sleep(time.Duration(HTTPSendRetryInterval) * time.Second)
 	}
 
 	return 0
@@ -45,7 +45,7 @@ func GetTimeSync() (bool, float64) {
 		Timeout: time.Duration(time.Duration(TimeDelayTimeout) * time.Second),
 	}
 
-	response, err := client.Get(TimeDeltaUrl)
+	response, err := client.Get(TimeDeltaURL)
 
 	if err != nil {
 		DebugLogger.Println("Can't execute HTTP request:", err)

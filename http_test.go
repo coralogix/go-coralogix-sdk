@@ -17,8 +17,8 @@ func TestSendRequestSuccess(t *testing.T) {
 		"",
 		"",
 	})
-	HttpStatus := SendRequest(BulkToSend)
-	if HttpStatus != 200 {
+	HTTPStatus := SendRequest(BulkToSend)
+	if HTTPStatus != 200 {
 		t.Error("Logs bulk sending failed!")
 	}
 }
@@ -27,8 +27,8 @@ func TestSendRequestPostFail(t *testing.T) {
 	SetDebug(true)
 	BulkToSend := CreateBulk()
 	BulkToSend.AddRecord(*InvalidLogMessage())
-	HttpStatus := SendRequest(BulkToSend)
-	if HttpStatus > 0 {
+	HTTPStatus := SendRequest(BulkToSend)
+	if HTTPStatus > 0 {
 		t.Error("Sending of invalid request should be failed!")
 	}
 }
@@ -44,8 +44,8 @@ func TestSendRequestErrorResponseStatus(t *testing.T) {
 		"",
 		"",
 	})
-	HttpStatus := SendRequest(BulkToSend)
-	if HttpStatus == 200 {
+	HTTPStatus := SendRequest(BulkToSend)
+	if HTTPStatus == 200 {
 		t.Error("Logs bulk was successful!")
 	}
 }
