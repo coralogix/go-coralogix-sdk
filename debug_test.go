@@ -1,13 +1,13 @@
 package coralogix
 
 import (
-    "testing"
+	"testing"
 )
 
 func TestSetDebugEnable(t *testing.T) {
-    SetDebug(true)
+	SetDebug(true)
 }
 
 func TestSetDebugDisable(t *testing.T) {
-    SetDebug(false)
+	SetDebug(false)
 }

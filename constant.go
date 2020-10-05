@@ -1,22 +1,50 @@
 package coralogix
 
 const (
-    MaxLogBufferSize        uint64  = 128 * (1024 * 1024)                         // Maximum log buffer size (default=128MiB)
-    MaxLogChunkSize         uint64  = 1.5 * (1024 * 1024)                         // Maximum chunk size (default=1.5MiB)
-    NormalSendSpeedInterval float64 = 0.5                                         // Bulk send interval in normal mode
-    FastSendSpeedInterval   float64 = 0.1                                         // Bulk send interval in fast mode
-    TimeDelayTimeout        uint    = 5                                           // Timeout for time-delay request
-    FailedPrivateKey        string  = "no private key"                            // Default private key
-    NoAppName               string  = "NO_APP_NAME"                               // Default application name
-    NoSubSystem             string  = "NO_SUB_NAME"                               // Default subsystem name
-    HttpTimeout             uint    = 30                                          // Default HTTP timeout
-    HttpSendRetryCount      uint    = 5                                           // Number of attempts to retry HTTP request
-    HttpSendRetryInterval   uint    = 2                                           // Interval between failed http post requests
-    LogCategory             string  = "CORALOGIX"                                 // Default category for log record
-    SyncTimeUpdateInterval  uint    = 5                                           // Time synchronization interval (in minutes)
+	// MaxLogBufferSize is maximum log buffer size (default=128MiB)
+	MaxLogBufferSize uint64 = 128 * (1024 * 1024)
+
+	// MaxLogChunkSize is maximum chunk size (default=1.5MiB)
+	MaxLogChunkSize uint64 = 1.5 * (1024 * 1024)
+
+	// NormalSendSpeedInterval is a bulk send interval in normal mode
+	NormalSendSpeedInterval float64 = 0.5
+
+	// FastSendSpeedInterval is a bulk send interval in fast mode
+	FastSendSpeedInterval float64 = 0.1
+
+	// TimeDelayTimeout is a timeout for time-delay request
+	TimeDelayTimeout uint = 5
+
+	// FailedPrivateKey is a default private key
+	FailedPrivateKey string = "no private key"
+
+	// NoAppName is a default application name
+	NoAppName string = "NO_APP_NAME"
+
+	// NoSubSystem is a default subsystem name
+	NoSubSystem string = "NO_SUB_NAME"
+
+	// HttpTimeout is a default HTTP timeout
+	HttpTimeout uint = 30
+
+	// HttpSendRetryCount is a number of attempts to retry HTTP request
+	HttpSendRetryCount uint = 5
+
+	// HttpSendRetryInterval is a interval between failed http post requests
+	HttpSendRetryInterval uint = 2
+
+	// LogCategory is a default category for log record
+	LogCategory string = "CORALOGIX"
+
+	// SyncTimeUpdateInterval is a time synchronization interval (in minutes)
+	SyncTimeUpdateInterval uint = 5
 )
 
 var (
-    LogUrl          string  = GetEnv("CORALOGIX_LOG_URL", "https://api.coralogix.com:443/api/v1/logs")          // Coralogix logs url endpoint
-    TimeDeltaUrl    string  = GetEnv("CORALOGIX_TIME_DELTA_URL", "https://api.coralogix.com:443/sdk/v1/time")   // Coralogix time delay url endpoint
+	// LogUrl is the Coralogix logs url endpoint
+	LogUrl string = GetEnv("CORALOGIX_LOG_URL", "https://api.coralogix.com:443/api/v1/logs")
+
+	// TimeDeltaUrl is the Coralogix time delay url endpoint
+	TimeDeltaUrl string = GetEnv("CORALOGIX_TIME_DELTA_URL", "https://api.coralogix.com:443/sdk/v1/time")
 )
