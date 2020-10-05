@@ -59,11 +59,11 @@ func (logger *CoralogixLogger) Destroy() {
 }
 
 // Log send record message to logger manager
-func (logger *CoralogixLogger) Log(Severity uint, Text interface{}, Category string, ClassName string, MethodName string, ThreadId string) {
+func (logger *CoralogixLogger) Log(Severity uint, Text interface{}, Category string, ClassName string, MethodName string, ThreadID string) {
 	if Category == "" {
 		Category = logger.Category
 	}
-	logger.LoggerManager.AddLogLine(Severity, Text, Category, ClassName, MethodName, ThreadId)
+	logger.LoggerManager.AddLogLine(Severity, Text, Category, ClassName, MethodName, ThreadID)
 }
 
 // Debug send log message with DEBUG severity level

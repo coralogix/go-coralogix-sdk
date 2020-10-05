@@ -17,7 +17,7 @@ type TestDummyStruct struct {
 func TestNewLoggerManager(t *testing.T) {
 	NewLoggerManagerTestInstance := CreateLoggerManager()
 	if reflect.TypeOf(NewLoggerManagerTestInstance) != reflect.TypeOf(&LoggerManager{}) ||
-		!strings.Contains(NewLoggerManagerTestInstance.LogsBuffer[0].Text, SDK_VERSION) {
+		!strings.Contains(NewLoggerManagerTestInstance.LogsBuffer[0].Text, sdkVersion) {
 		t.Error("CoralogixLogger manager creation failed!")
 	}
 }
@@ -63,7 +63,7 @@ func TestLoggerManager_LogsBufferLengthFail(t *testing.T) {
 func TestLoggerManager_SendInitMessage(t *testing.T) {
 	NewLoggerManagerTestInstance := CreateLoggerManager()
 	NewLoggerManagerTestInstance.SendInitMessage()
-	if !strings.Contains(NewLoggerManagerTestInstance.LogsBuffer[1].Text, SDK_VERSION) {
+	if !strings.Contains(NewLoggerManagerTestInstance.LogsBuffer[1].Text, sdkVersion) {
 		t.Error("Initial message sending failed!")
 	}
 }

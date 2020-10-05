@@ -25,14 +25,14 @@ const (
 	// NoSubSystem is a default subsystem name
 	NoSubSystem string = "NO_SUB_NAME"
 
-	// HttpTimeout is a default HTTP timeout
-	HttpTimeout uint = 30
+	// HTTPTimeout is a default HTTP timeout
+	HTTPTimeout uint = 30
 
-	// HttpSendRetryCount is a number of attempts to retry HTTP request
-	HttpSendRetryCount uint = 5
+	// HTTPSendRetryCount is a number of attempts to retry HTTP request
+	HTTPSendRetryCount uint = 5
 
-	// HttpSendRetryInterval is a interval between failed http post requests
-	HttpSendRetryInterval uint = 2
+	// HTTPSendRetryInterval is a interval between failed http post requests
+	HTTPSendRetryInterval uint = 2
 
 	// LogCategory is a default category for log record
 	LogCategory string = "CORALOGIX"
@@ -42,9 +42,9 @@ const (
 )
 
 var (
-	// LogUrl is the Coralogix logs url endpoint
-	LogUrl string = GetEnv("CORALOGIX_LOG_URL", "https://api.coralogix.com:443/api/v1/logs")
+	// LogURL is the Coralogix logs url endpoint
+	LogURL string = GetEnv("CORALOGIX_LOG_URL", "https://api.coralogix.com:443/api/v1/logs")
 
-	// TimeDeltaUrl is the Coralogix time delay url endpoint
-	TimeDeltaUrl string = GetEnv("CORALOGIX_TIME_DELTA_URL", "https://api.coralogix.com:443/sdk/v1/time")
+	// TimeDeltaURL is the Coralogix time delay url endpoint
+	TimeDeltaURL string = GetEnv("CORALOGIX_TIME_DELTA_URL", "https://api.coralogix.com:443/sdk/v1/time")
 )

@@ -63,7 +63,7 @@ func (manager *LoggerManager) SendInitMessage() {
 			"The Application Name %s and Subsystem Name %s from the Go SDK, version %s has started to send data",
 			manager.ApplicationName,
 			manager.SubsystemName,
-			SDK_VERSION,
+			sdkVersion,
 		),
 		LogCategory,
 		"",
@@ -73,7 +73,7 @@ func (manager *LoggerManager) SendInitMessage() {
 }
 
 // AddLogLine push log record to buffer
-func (manager *LoggerManager) AddLogLine(Severity uint, Text interface{}, Category string, ClassName string, MethodName string, ThreadId string) {
+func (manager *LoggerManager) AddLogLine(Severity uint, Text interface{}, Category string, ClassName string, MethodName string, ThreadID string) {
 	if manager.LogsBufferLength() < MaxLogBufferSize {
 		if Severity < Level.DEBUG || Severity > Level.CRITICAL {
 			Severity = Level.INFO
@@ -92,7 +92,7 @@ func (manager *LoggerManager) AddLogLine(Severity uint, Text interface{}, Catego
 			Category,
 			ClassName,
 			MethodName,
-			ThreadId,
+			ThreadID,
 		}
 
 		if MaxLogChunkSize <= uint64(NewLogRecord.Size()) {

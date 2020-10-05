@@ -10,7 +10,7 @@ type Log struct {
 	Category   string  `json:"category"`   // Log record category
 	ClassName  string  `json:"className"`  // Log record class name
 	MethodName string  `json:"methodName"` // Log record method name
-	ThreadId   string  `json:"threadId"`   // Thread ID
+	ThreadID   string  `json:"threadId"`   // Thread ID
 }
 
 // Size calculate log record length in bytes
