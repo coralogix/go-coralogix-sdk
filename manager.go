@@ -159,7 +159,7 @@ func (manager *LoggerManager) Run() {
 		}
 
 		DebugLogger.Printf("Next buffer check is scheduled in %.1f seconds\n", NextSendInterval)
-		time.Sleep(time.Duration(NextSendInterval) * time.Second)
+		<-time.After(time.Duration(NextSendInterval) * time.Second)
 	}
 }
 
