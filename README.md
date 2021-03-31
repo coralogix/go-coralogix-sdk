@@ -1,7 +1,7 @@
 # Coralogix Go SDK
 
 [![goreportcard](https://goreportcard.com/badge/github.com/coralogix/go-coralogix-sdk)](https://goreportcard.com/report/github.com/coralogix/go-coralogix-sdk)
-[![godoc](https://img.shields.io/badge/godoc-reference-brightgreen.svg?style=flat)](https://godoc.org/github.com/coralogix/go-coralogix-sdk)
+[![Go Reference](https://pkg.go.dev/badge/github.com/coralogix/go-coralogix-sdk.svg)](https://pkg.go.dev/github.com/coralogix/go-coralogix-sdk)
 [![license](https://img.shields.io/github/license/coralogix/go-coralogix-sdk.svg)](https://raw.githubusercontent.com/coralogix/go-coralogix-sdk/master/LICENSE)
 [![Build Status](https://travis-ci.org/coralogix/go-coralogix-sdk.svg?branch=master)](https://travis-ci.org/coralogix/go-coralogix-sdk)
 [![codecov](https://codecov.io/gh/coralogix/go-coralogix-sdk/branch/master/graph/badge.svg)](https://codecov.io/gh/coralogix/go-coralogix-sdk)
