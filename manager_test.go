@@ -17,7 +17,7 @@ type TestDummyStruct struct {
 func TestNewLoggerManager(t *testing.T) {
 	NewLoggerManagerTestInstance := CreateLoggerManager()
 	if reflect.TypeOf(NewLoggerManagerTestInstance) != reflect.TypeOf(&LoggerManager{}) ||
-		!strings.Contains(NewLoggerManagerTestInstance.LogsBuffer[0].Text, sdkVersion) {
+		!strings.Contains(NewLoggerManagerTestInstance.LogsBuffer.Slice(1)[0].Text, sdkVersion) {
 		t.Error("CoralogixLogger manager creation failed!")
 	}
 }
@@ -32,7 +32,7 @@ func TestLoggerManager_LogsBufferSize(t *testing.T) {
 		"",
 		"",
 	)
-	if NewLoggerManagerTestInstance.LogsBufferSize() != 2 {
+	if NewLoggerManagerTestInstance.LogsBuffer.Len() != 2 {
 		t.Error("Failed to check logs buffer size!")
 	}
 }
@@ -47,15 +47,16 @@ func TestLoggerManager_LogsBufferLength(t *testing.T) {
 		"",
 		"",
 	)
-	if NewLoggerManagerTestInstance.LogsBufferSize() == 0 {
+	if NewLoggerManagerTestInstance.LogsBuffer.Len() == 0 {
 		t.Error("Failed to check logs buffer length!")
 	}
 }
 
 func TestLoggerManager_LogsBufferLengthFail(t *testing.T) {
 	NewLoggerManagerTestInstance := CreateLoggerManager()
-	NewLoggerManagerTestInstance.LogsBuffer = []Log{*InvalidLogMessage()}
-	if NewLoggerManagerTestInstance.LogsBufferLength() > 0 {
+	NewLoggerManagerTestInstance.LogsBuffer = LogBuffer{}
+	NewLoggerManagerTestInstance.LogsBuffer.Append(*InvalidLogMessage())
+	if NewLoggerManagerTestInstance.LogsBuffer.Size() > 0 {
 		t.Error("Buffer length should fail due to incorrect content!")
 	}
 }
@@ -63,7 +64,7 @@ func TestLoggerManager_LogsBufferLengthFail(t *testing.T) {
 func TestLoggerManager_SendInitMessage(t *testing.T) {
 	NewLoggerManagerTestInstance := CreateLoggerManager()
 	NewLoggerManagerTestInstance.SendInitMessage()
-	if !strings.Contains(NewLoggerManagerTestInstance.LogsBuffer[1].Text, sdkVersion) {
+	if !strings.Contains(NewLoggerManagerTestInstance.LogsBuffer.Slice(2)[1].Text, sdkVersion) {
 		t.Error("Initial message sending failed!")
 	}
 }
@@ -78,7 +79,7 @@ func TestLoggerManager_AddLogLine(t *testing.T) {
 		"",
 		"",
 	)
-	if NewLoggerManagerTestInstance.LogsBufferSize() != 2 {
+	if NewLoggerManagerTestInstance.LogsBuffer.Len() != 2 {
 		t.Error("Failed to add log to buffer!")
 	}
 }
@@ -93,7 +94,7 @@ func TestLoggerManager_AddLogLineWithInvalidSeverity(t *testing.T) {
 		"",
 		"",
 	)
-	if NewLoggerManagerTestInstance.LogsBuffer[1].Severity != Level.INFO {
+	if NewLoggerManagerTestInstance.LogsBuffer.Slice(2)[1].Severity != Level.INFO {
 		t.Error("Severity checking failed!")
 	}
 }
@@ -108,7 +109,7 @@ func TestLoggerManager_AddLogLineWithEmptyText(t *testing.T) {
 		"",
 		"",
 	)
-	if NewLoggerManagerTestInstance.LogsBuffer[1].Text != "EMPTY_STRING" {
+	if NewLoggerManagerTestInstance.LogsBuffer.Slice(2)[1].Text != "EMPTY_STRING" {
 		t.Error("Log text checking failed!")
 	}
 }
@@ -123,7 +124,7 @@ func TestLoggerManager_AddLogLineWithNil(t *testing.T) {
 		"",
 		"",
 	)
-	if NewLoggerManagerTestInstance.LogsBuffer[1].Text != "EMPTY_STRING" {
+	if NewLoggerManagerTestInstance.LogsBuffer.Slice(2)[1].Text != "EMPTY_STRING" {
 		t.Error("Log text checking failed!")
 	}
 }
@@ -138,7 +139,7 @@ func TestLoggerManager_AddLogLineWithEmptyCategory(t *testing.T) {
 		"",
 		"",
 	)
-	if NewLoggerManagerTestInstance.LogsBuffer[1].Category != LogCategory {
+	if NewLoggerManagerTestInstance.LogsBuffer.Slice(2)[1].Category != LogCategory {
 		t.Error("Log category checking failed!")
 	}
 }
@@ -153,7 +154,7 @@ func TestLoggerManager_AddLogLineOverflow(t *testing.T) {
 		"",
 		"",
 	)
-	if NewLoggerManagerTestInstance.LogsBufferSize() > 1 {
+	if NewLoggerManagerTestInstance.LogsBuffer.Len() > 1 {
 		t.Error("Failed to check log record max length!")
 	}
 }
@@ -169,14 +170,14 @@ func TestLoggerManager_SendBulk(t *testing.T) {
 		"",
 	)
 	if NewLoggerManagerTestInstance.SendBulk(true) != true ||
-		NewLoggerManagerTestInstance.LogsBufferSize() > 0 {
+		NewLoggerManagerTestInstance.LogsBuffer.Len() > 0 {
 		t.Error("Failed to check log record max length!")
 	}
 }
 
 func TestLoggerManager_SendBulkWithEmptyBuffer(t *testing.T) {
 	NewLoggerManagerTestInstance := CreateLoggerManager()
-	NewLoggerManagerTestInstance.LogsBuffer = []Log{}
+	NewLoggerManagerTestInstance.LogsBuffer = LogBuffer{}
 	if NewLoggerManagerTestInstance.SendBulk(true) != false {
 		t.Error("Unexpected behavior when sending empty buffer!")
 	}
@@ -195,7 +196,7 @@ func TestLoggerManager_SendBulkWithBigBuffer(t *testing.T) {
 		)
 	}
 	NewLoggerManagerTestInstance.SendBulk(true)
-	if NewLoggerManagerTestInstance.LogsBufferSize() == 0 {
+	if NewLoggerManagerTestInstance.LogsBuffer.Len() == 0 {
 		t.Error("Incorrect buffer chunk process!")
 	}
 }
@@ -211,7 +212,7 @@ func TestLoggerManager_Flush(t *testing.T) {
 		"",
 	)
 	NewLoggerManagerTestInstance.Flush()
-	if NewLoggerManagerTestInstance.LogsBufferSize() > 0 {
+	if NewLoggerManagerTestInstance.LogsBuffer.Len() > 0 {
 		t.Error("Logs buffer flush failed!")
 	}
 }

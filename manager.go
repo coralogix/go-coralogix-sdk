@@ -13,7 +13,7 @@ type LoggerManager struct {
 	TimeDelta           float64        // Time difference between local machine and Coralogix servers
 	TimeDeltaLastUpdate int            // Last time-delta update time
 	Stopped             bool           // Is current logger manager stopped
-	LogsBuffer          []Log          // Logs buffer
+	LogsBuffer          LogBuffer      // Logs buffer
 	Credentials                        // Credentials for Coralogix account
 	Lock                sync.WaitGroup // CoralogixLogger manager locker
 }
@@ -25,7 +25,7 @@ func NewLoggerManager(PrivateKey string, ApplicationName string, SubsystemName s
 		0,
 		0,
 		false,
-		[]Log{},
+		LogBuffer{},
 		Credentials{
 			PrivateKey,
 			ApplicationName,
@@ -38,21 +38,6 @@ func NewLoggerManager(PrivateKey string, ApplicationName string, SubsystemName s
 
 	LoggerManagerInstance.SendInitMessage()
 	return LoggerManagerInstance
-}
-
-// LogsBufferLength calculate buffer length in bytes
-func (manager *LoggerManager) LogsBufferLength() uint64 {
-	JSONBuffer, err := json.Marshal(manager.LogsBuffer)
-	if err != nil {
-		DebugLogger.Println("Can't convert to JSON: ", err)
-		return 0
-	}
-	return uint64(len(JSONBuffer))
-}
-
-// LogsBufferSize return buffer entries count
-func (manager *LoggerManager) LogsBufferSize() int {
-	return len(manager.LogsBuffer)
 }
 
 // SendInitMessage send initialization message to Coralogix for connection verify
@@ -74,7 +59,7 @@ func (manager *LoggerManager) SendInitMessage() {
 
 // AddLogLine push log record to buffer
 func (manager *LoggerManager) AddLogLine(Severity uint, Text interface{}, Category string, ClassName string, MethodName string, ThreadID string) {
-	if manager.LogsBufferLength() < MaxLogBufferSize {
+	if manager.LogsBuffer.Size() < MaxLogBufferSize {
 		if Severity < Level.DEBUG || Severity > Level.CRITICAL {
 			Severity = Level.INFO
 		}
@@ -93,9 +78,10 @@ func (manager *LoggerManager) AddLogLine(Severity uint, Text interface{}, Catego
 			ClassName,
 			MethodName,
 			ThreadID,
+			0,
 		}
 
-		if MaxLogChunkSize <= uint64(NewLogRecord.Size()) {
+		if MaxLogChunkSize <= NewLogRecord.Size() {
 			DebugLogger.Printf(
 				"AddLogLine(): received log message too big of size= %d MB, bigger than max_log_chunk_size= %d; throwing...\n",
 				NewLogRecord.Size()/(1024*1024),
@@ -104,7 +90,7 @@ func (manager *LoggerManager) AddLogLine(Severity uint, Text interface{}, Catego
 			return
 		}
 
-		manager.LogsBuffer = append(manager.LogsBuffer, NewLogRecord)
+		manager.LogsBuffer.Append(NewLogRecord)
 	}
 }
 
@@ -114,26 +100,26 @@ func (manager *LoggerManager) SendBulk(SyncTime bool) bool {
 		manager.UpdateTimeDeltaInterval()
 	}
 
-	BufferSizeToSend := manager.LogsBufferSize()
-	if BufferSizeToSend < 1 {
-		DebugLogger.Println("Buffer is empty, there is nothing to send!")
+	BufferLenToSend := manager.LogsBuffer.Len()
+	if BufferLenToSend < 1 {
+		DebugLogger.Println("buffer is empty, there is nothing to send!")
 		return false
 	}
 
-	for manager.LogsBufferLength() > MaxLogChunkSize && BufferSizeToSend > 1 {
-		BufferSizeToSend = int(BufferSizeToSend / 2)
+	for manager.LogsBuffer.Size() > MaxLogChunkSize && BufferLenToSend > 1 {
+		BufferLenToSend = BufferLenToSend / 2
 	}
 
-	if BufferSizeToSend < 1 {
-		BufferSizeToSend = 1
+	if BufferLenToSend < 1 {
+		BufferLenToSend = 1
 	}
 
-	DebugLogger.Println("Checking buffer size. Total log entries is:", BufferSizeToSend)
+	DebugLogger.Println("Checking buffer size. Total log entries is:", BufferLenToSend)
 	LogsBulk := NewBulk(manager.Credentials)
-	for _, Record := range manager.LogsBuffer[:BufferSizeToSend] {
+	for _, Record := range manager.LogsBuffer.Slice(BufferLenToSend) {
 		LogsBulk.AddRecord(Record)
 	}
-	manager.LogsBuffer = manager.LogsBuffer[BufferSizeToSend:]
+
 	SendRequest(LogsBulk)
 	return true
 }
@@ -152,7 +138,7 @@ func (manager *LoggerManager) Run() {
 
 		manager.SendBulk(manager.SyncTime)
 
-		if manager.LogsBufferLength() > (MaxLogChunkSize / 2) {
+		if manager.LogsBuffer.Size() > (MaxLogChunkSize / 2) {
 			NextSendInterval = FastSendSpeedInterval
 		} else {
 			NextSendInterval = NormalSendSpeedInterval

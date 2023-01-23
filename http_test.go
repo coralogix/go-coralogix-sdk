@@ -16,6 +16,7 @@ func TestSendRequestSuccess(t *testing.T) {
 		"",
 		"",
 		"",
+		0,
 	})
 	HTTPStatus := SendRequest(BulkToSend)
 	if HTTPStatus != 200 {
@@ -43,6 +44,7 @@ func TestSendRequestErrorResponseStatus(t *testing.T) {
 		"",
 		"",
 		"",
+		0,
 	})
 	HTTPStatus := SendRequest(BulkToSend)
 	if HTTPStatus == 200 {

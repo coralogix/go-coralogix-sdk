@@ -125,7 +125,7 @@ func TestLogger_Log(t *testing.T) {
 		"",
 		"",
 	)
-	if NewLoggerTestInstance.LoggerManager.LogsBufferSize() < 1 {
+	if NewLoggerTestInstance.LoggerManager.LogsBuffer.Len() < 1 {
 		t.Error("New log message add failed!")
 	}
 }
@@ -142,8 +142,8 @@ func TestLogger_Debug(t *testing.T) {
 	defer NewLoggerTestInstance.Destroy()
 	NewLoggerTestInstance.LoggerManager.Stop()
 	NewLoggerTestInstance.Debug("Test debug message")
-	if NewLoggerTestInstance.LoggerManager.LogsBufferSize() < 1 ||
-		NewLoggerTestInstance.LoggerManager.LogsBuffer[0].Severity != Level.DEBUG {
+	if NewLoggerTestInstance.LoggerManager.LogsBuffer.Len() < 1 ||
+		NewLoggerTestInstance.LoggerManager.LogsBuffer.Slice(1)[0].Severity != Level.DEBUG {
 		t.Error("Debug log message add failed!")
 	}
 }
@@ -160,8 +160,8 @@ func TestLogger_Verbose(t *testing.T) {
 	defer NewLoggerTestInstance.Destroy()
 	NewLoggerTestInstance.LoggerManager.Stop()
 	NewLoggerTestInstance.Verbose("Test verbose message")
-	if NewLoggerTestInstance.LoggerManager.LogsBufferSize() < 1 ||
-		NewLoggerTestInstance.LoggerManager.LogsBuffer[0].Severity != Level.VERBOSE {
+	if NewLoggerTestInstance.LoggerManager.LogsBuffer.Len() < 1 ||
+		NewLoggerTestInstance.LoggerManager.LogsBuffer.Slice(1)[0].Severity != Level.VERBOSE {
 		t.Error("Verbose log message add failed!")
 	}
 }
@@ -178,8 +178,8 @@ func TestLogger_Info(t *testing.T) {
 	defer NewLoggerTestInstance.Destroy()
 	NewLoggerTestInstance.LoggerManager.Stop()
 	NewLoggerTestInstance.Info("Test info message")
-	if NewLoggerTestInstance.LoggerManager.LogsBufferSize() < 1 ||
-		NewLoggerTestInstance.LoggerManager.LogsBuffer[0].Severity != Level.INFO {
+	if NewLoggerTestInstance.LoggerManager.LogsBuffer.Len() < 1 ||
+		NewLoggerTestInstance.LoggerManager.LogsBuffer.Slice(1)[0].Severity != Level.INFO {
 		t.Error("Info log message add failed!")
 	}
 }
@@ -196,8 +196,8 @@ func TestLogger_Warning(t *testing.T) {
 	defer NewLoggerTestInstance.Destroy()
 	NewLoggerTestInstance.LoggerManager.Stop()
 	NewLoggerTestInstance.Warning("Test warning message")
-	if NewLoggerTestInstance.LoggerManager.LogsBufferSize() < 1 ||
-		NewLoggerTestInstance.LoggerManager.LogsBuffer[0].Severity != Level.WARNING {
+	if NewLoggerTestInstance.LoggerManager.LogsBuffer.Len() < 1 ||
+		NewLoggerTestInstance.LoggerManager.LogsBuffer.Slice(1)[0].Severity != Level.WARNING {
 		t.Error("Warning log message add failed!")
 	}
 }
@@ -214,8 +214,8 @@ func TestLogger_Error(t *testing.T) {
 	defer NewLoggerTestInstance.Destroy()
 	NewLoggerTestInstance.LoggerManager.Stop()
 	NewLoggerTestInstance.Error("Test error message")
-	if NewLoggerTestInstance.LoggerManager.LogsBufferSize() < 1 ||
-		NewLoggerTestInstance.LoggerManager.LogsBuffer[0].Severity != Level.ERROR {
+	if NewLoggerTestInstance.LoggerManager.LogsBuffer.Len() < 1 ||
+		NewLoggerTestInstance.LoggerManager.LogsBuffer.Slice(1)[0].Severity != Level.ERROR {
 		t.Error("Error log message add failed!")
 	}
 }
@@ -232,8 +232,8 @@ func TestLogger_Critical(t *testing.T) {
 	defer NewLoggerTestInstance.Destroy()
 	NewLoggerTestInstance.LoggerManager.Stop()
 	NewLoggerTestInstance.Critical("Test critical message")
-	if NewLoggerTestInstance.LoggerManager.LogsBufferSize() < 1 ||
-		NewLoggerTestInstance.LoggerManager.LogsBuffer[0].Severity != Level.CRITICAL {
+	if NewLoggerTestInstance.LoggerManager.LogsBuffer.Len() < 1 ||
+		NewLoggerTestInstance.LoggerManager.LogsBuffer.Slice(1)[0].Severity != Level.CRITICAL {
 		t.Error("Critical log message add failed!")
 	}
 }

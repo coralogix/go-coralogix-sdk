@@ -22,6 +22,7 @@ func TestBulk_AddRecord(t *testing.T) {
 		"",
 		"",
 		"",
+		0,
 	})
 	if len(RecordsBulk.LogEntries) < 1 {
 		t.Error("Adding new record to bulk failed!")
