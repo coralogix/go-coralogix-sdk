@@ -13,6 +13,7 @@ type LoggerManager struct {
 	TimeDelta           float64        // Time difference between local machine and Coralogix servers
 	TimeDeltaLastUpdate int            // Last time-delta update time
 	Stopped             bool           // Is current logger manager stopped
+	SendInterval        time.Duration  // Send bulk logs interval
 	LogsBuffer          LogBuffer      // Logs buffer
 	Credentials                        // Credentials for Coralogix account
 	Lock                sync.WaitGroup // CoralogixLogger manager locker
@@ -25,6 +26,7 @@ func NewLoggerManager(PrivateKey string, ApplicationName string, SubsystemName s
 		0,
 		0,
 		false,
+		0,
 		LogBuffer{},
 		Credentials{
 			PrivateKey,
@@ -126,7 +128,7 @@ func (manager *LoggerManager) SendBulk(SyncTime bool) bool {
 
 // Run should work in separate thread and asynchronously operate with logs
 func (manager *LoggerManager) Run() {
-	var NextSendInterval float64
+	var NextSendInterval time.Duration
 
 	defer manager.Lock.Done()
 
@@ -138,14 +140,18 @@ func (manager *LoggerManager) Run() {
 
 		manager.SendBulk(manager.SyncTime)
 
-		if manager.LogsBuffer.Size() > (MaxLogChunkSize / 2) {
-			NextSendInterval = FastSendSpeedInterval
+		if manager.SendInterval > 0 {
+			NextSendInterval = manager.SendInterval
 		} else {
-			NextSendInterval = NormalSendSpeedInterval
+			if manager.LogsBuffer.Size() > (MaxLogChunkSize / 2) {
+				NextSendInterval = FastSendSpeedInterval
+			} else {
+				NextSendInterval = NormalSendSpeedInterval
+			}
 		}
 
 		DebugLogger.Printf("Next buffer check is scheduled in %.1f seconds\n", NextSendInterval)
-		time.Sleep(time.Duration(NextSendInterval) * time.Second)
+		time.Sleep(NextSendInterval)
 	}
 }
 
