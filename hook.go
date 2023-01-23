@@ -98,18 +98,16 @@ func (hook *Hook) Fire(entry *logrus.Entry) error {
 		Text = entry.Message
 	}
 
-	hook.Writer.LogsBuffer = append(
-		hook.Writer.LogsBuffer,
-		Log{
-			float64(entry.Time.Unix()) * 1000.0,
-			Level,
-			MessageToString(Text),
-			Category,
-			ClassName,
-			MethodName,
-			ThreadID,
-		},
-	)
+	hook.Writer.LogsBuffer.Append(Log{
+		float64(entry.Time.Unix()) * 1000.0,
+		Level,
+		MessageToString(Text),
+		Category,
+		ClassName,
+		MethodName,
+		ThreadID,
+		0,
+	})
 
 	if entry.Level == logrus.FatalLevel || entry.Level == logrus.PanicLevel {
 		hook.Writer.Flush()
