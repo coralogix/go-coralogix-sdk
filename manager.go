@@ -93,9 +93,10 @@ func (manager *LoggerManager) AddLogLine(Severity uint, Text interface{}, Catego
 			ClassName,
 			MethodName,
 			ThreadID,
+			0,
 		}
 
-		if MaxLogChunkSize <= uint64(NewLogRecord.Size()) {
+		if MaxLogChunkSize <= NewLogRecord.Size() {
 			DebugLogger.Printf(
 				"AddLogLine(): received log message too big of size= %d MB, bigger than max_log_chunk_size= %d; throwing...\n",
 				NewLogRecord.Size()/(1024*1024),

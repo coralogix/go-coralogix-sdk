@@ -14,14 +14,15 @@ func TestLog_Size(t *testing.T) {
 		"",
 		"",
 		"",
+		0,
 	}
-	if LogRecord.Size() < 0 {
+	if LogRecord.Size() == 0 {
 		t.Error("Invalid log record size calculation!")
 	}
 }
 
 func TestLog_SizeFail(t *testing.T) {
-	if InvalidLogMessage().Size() >= 0 {
+	if InvalidLogMessage().Size() > 0 {
 		t.Error("Log size should be equals to 0 due to JSON parsing error!")
 	}
 }
@@ -35,5 +36,6 @@ func InvalidLogMessage() *Log {
 		"",
 		"",
 		"",
+		0,
 	}
 }

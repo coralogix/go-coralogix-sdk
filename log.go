@@ -11,13 +11,19 @@ type Log struct {
 	ClassName  string  `json:"className"`  // Log record class name
 	MethodName string  `json:"methodName"` // Log record method name
 	ThreadID   string  `json:"threadId"`   // Thread ID
+
+	size uint64
 }
 
 // Size calculate log record length in bytes
-func (Record *Log) Size() int {
-	JSONRecord, err := json.Marshal(Record)
-	if err != nil {
-		return -1
+func (Record *Log) Size() uint64 {
+	if Record.size == 0 {
+		JSONRecord, err := json.Marshal(Record)
+		if err != nil {
+			return 0
+		}
+		Record.size = uint64(len(string(JSONRecord)))
 	}
-	return len(string(JSONRecord))
+
+	return Record.size
 }
