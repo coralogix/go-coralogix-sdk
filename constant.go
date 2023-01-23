@@ -1,5 +1,7 @@
 package coralogix
 
+import "time"
+
 const (
 	// MaxLogBufferSize is maximum log buffer size (default=128MiB)
 	MaxLogBufferSize uint64 = 128 * (1024 * 1024)
@@ -8,10 +10,10 @@ const (
 	MaxLogChunkSize uint64 = 1.5 * (1024 * 1024)
 
 	// NormalSendSpeedInterval is a bulk send interval in normal mode
-	NormalSendSpeedInterval float64 = 0.5
+	NormalSendSpeedInterval = 1 * time.Second
 
 	// FastSendSpeedInterval is a bulk send interval in fast mode
-	FastSendSpeedInterval float64 = 0.1
+	FastSendSpeedInterval = 500 * time.Millisecond
 
 	// TimeDelayTimeout is a timeout for time-delay request
 	TimeDelayTimeout uint = 5

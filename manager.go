@@ -128,7 +128,7 @@ func (manager *LoggerManager) SendBulk(SyncTime bool) bool {
 
 // Run should work in separate thread and asynchronously operate with logs
 func (manager *LoggerManager) Run() {
-	var NextSendInterval float64
+	var NextSendInterval time.Duration
 
 	defer manager.Lock.Done()
 
@@ -151,7 +151,7 @@ func (manager *LoggerManager) Run() {
 		}
 
 		DebugLogger.Printf("Next buffer check is scheduled in %.1f seconds\n", NextSendInterval)
-		time.Sleep(time.Duration(NextSendInterval) * time.Second)
+		time.Sleep(NextSendInterval)
 	}
 }
 
