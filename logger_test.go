@@ -41,6 +41,7 @@ func TestMain(m *testing.M) {
 	LogURL = server.URL
 	code := m.Run()
 	server.Close()
+	close(testRequestChan)
 	os.Exit(code)
 }
 
