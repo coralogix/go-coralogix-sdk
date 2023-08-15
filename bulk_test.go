@@ -1,15 +1,14 @@
 package coralogix
 
 import (
-	"reflect"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewBulk(t *testing.T) {
-	if reflect.TypeOf(CreateBulk()) != reflect.TypeOf(&Bulk{}) {
-		t.Error("Bulk creation failed!")
-	}
+	assert.IsType(t, &Bulk{}, CreateBulk(), "Bulk creation failed!")
 }
 
 func TestBulk_AddRecord(t *testing.T) {
@@ -24,24 +23,21 @@ func TestBulk_AddRecord(t *testing.T) {
 		"",
 		0,
 	})
-	if len(RecordsBulk.LogEntries) < 1 {
-		t.Error("Adding new record to bulk failed!")
-	}
+
+	assert.True(t, len(RecordsBulk.LogEntries) >= 1, "Adding new record to bulk failed!")
 }
 
 func TestBulk_ToJSON(t *testing.T) {
 	RecordsBulkJSON := CreateBulk().ToJSON()
-	if RecordsBulkJSON == nil || reflect.TypeOf(RecordsBulkJSON) != reflect.TypeOf([]byte{}) {
-		t.Error("Error while converting bulk to JSON!")
-	}
+	assert.NotNil(t, RecordsBulkJSON)
+	assert.IsType(t, []byte(""), RecordsBulkJSON, "Error while converting bulk to JSON!")
+
 }
 
 func TestBulk_ToJSONFail(t *testing.T) {
 	RecordsBulk := CreateBulk()
 	RecordsBulk.AddRecord(*InvalidLogMessage())
-	if RecordsBulk.ToJSON() != nil {
-		t.Error("Error while catching JSON converting error!")
-	}
+	assert.Nil(t, RecordsBulk.ToJSON(), "Error while catching JSON converting error!")
 }
 
 func CreateBulk() *Bulk {
