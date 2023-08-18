@@ -11,7 +11,7 @@ var DebugLogger = log.New(ioutil.Discard, "CORALOGIX: ", log.Ldate|log.Ltime)
 
 // SetDebug enable/disable internal logger
 func SetDebug(Status bool) {
-	if Status == true {
+	if Status {
 		DebugLogger.SetOutput(os.Stdout)
 	} else {
 		DebugLogger.SetOutput(ioutil.Discard)

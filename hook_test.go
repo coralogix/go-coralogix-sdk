@@ -1,15 +1,20 @@
 package coralogix
 
 import (
-	"github.com/sirupsen/logrus"
+	"fmt"
+	"strings"
 	"testing"
+	"time"
+
+	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestHook_Send(t *testing.T) {
 	CoralogixHook := NewCoralogixHook(
 		GetEnv(
 			"PRIVATE_KEY",
-			"7569303a-6269-4d2c-bf14-1aec9b1786a4",
+			testPrivateKey,
 		),
 		"sdk-go",
 		"test",
@@ -18,54 +23,105 @@ func TestHook_Send(t *testing.T) {
 	defer CoralogixHook.Close()
 
 	log := logrus.New()
+
 	log.SetLevel(logrus.TraceLevel)
-
 	log.AddHook(CoralogixHook)
-
-	log.WithFields(logrus.Fields{
-		"Category":   "MyCategory",
-		"ClassName":  "MyClassName",
-		"MethodName": "MyMethodName",
-		"ThreadId":   "MyThreadId",
-		"extra":      "additional",
-	}).Debug("Test message!")
-
-	log.Trace("Test trace message!")
-	log.Debug("Test debug message!")
-	log.Info("Test info message!")
-	log.Warn("Test warn message!")
-	log.Error("Test error message!")
-	log.Panic("Test panic message!")
-}
-
-func TestHook_SendWithCaller(t *testing.T) {
-	CoralogixHook := NewCoralogixHook(
-		GetEnv(
-			"PRIVATE_KEY",
-			"7569303a-6269-4d2c-bf14-1aec9b1786a4",
-		),
-		"sdk-go",
-		"test",
-	)
-	defer func() { recover() }()
-	defer CoralogixHook.Close()
-
-	log := logrus.New()
-	log.SetReportCaller(true)
-	log.SetLevel(logrus.TraceLevel)
-
-	log.AddHook(CoralogixHook)
-
-	log.WithFields(logrus.Fields{
+	fields := logrus.Fields{
 		"Category": "MyCategory",
 		"ThreadId": "MyThreadId",
 		"extra":    "additional",
-	}).Debug("Test message!")
+	}
 
-	log.Trace("Test trace message with caller!")
-	log.Debug("Test debug message with caller!")
-	log.Info("Test info message with caller!")
-	log.Warn("Test warn message with caller!")
-	log.Error("Test error message with caller!")
-	log.Panic("Test panic message with caller!")
+	testcases := []struct {
+		name     string
+		logfn    func(args ...interface{})
+		severity uint
+	}{
+		{
+			name:     "test trace",
+			severity: Level.TRACE,
+			logfn: func(args ...interface{}) {
+				log.WithFields(fields).Trace(args...)
+			},
+		},
+		{
+			name:     "test debug",
+			severity: Level.DEBUG,
+			logfn: func(args ...interface{}) {
+				log.WithFields(fields).Debug(args...)
+			},
+		},
+		{
+			name:     "test error",
+			severity: Level.ERROR,
+			logfn: func(args ...interface{}) {
+				log.WithFields(fields).Error(args...)
+			},
+		},
+		{
+			name:     "test info",
+			severity: Level.ERROR,
+			logfn: func(args ...interface{}) {
+				log.WithFields(fields).Error(args...)
+			},
+		},
+		{
+			name:     "test warn",
+			severity: Level.WARNING,
+			logfn: func(args ...interface{}) {
+				log.WithFields(fields).Warn(args...)
+			},
+		},
+	}
+
+	for _, tc := range testcases {
+		t.Run(tc.name, func(t *testing.T) {
+			msg := fmt.Sprintf("%s (%s)", tc.name, t.Name())
+			tc.logfn(msg)
+			time.Sleep(time.Duration(1) * time.Second)
+			bulk, ok := mockHTTPServerMap[t.Name()]
+			assert.True(t, ok, "%s key not found in mockHTTPServerMap", t.Name())
+
+			var msgExists bool
+			for _, entry := range bulk.LogEntries {
+				if msgExists = strings.Contains(entry.Text, tc.name); msgExists {
+					assert.Equal(t, tc.severity, entry.Severity)
+					assert.Equal(t, fields["Category"], entry.Category)
+					assert.Equal(t, fields["ThreadId"], entry.ThreadID,
+						"expected %v, got %v", fields["MyThreadId"], entry.ThreadID)
+					assert.True(t, strings.Contains(entry.Text, fields["extra"].(string)),
+						"entry Text does not contain extra field", entry.Text, fields["extra"])
+					break
+				}
+			}
+			assert.True(t, msgExists, "no matching message found", string(bulk.ToJSON()))
+		})
+	}
+
+	// test with caller\
+	log.SetReportCaller(true)
+	for _, tc := range testcases {
+		tc.name = fmt.Sprintf("%s_withReportCaller", tc.name)
+		t.Run(tc.name, func(t *testing.T) {
+			msg := fmt.Sprintf("%s (%s)", tc.name, t.Name())
+			tc.logfn(msg)
+			time.Sleep(time.Duration(1) * time.Second)
+			bulk, ok := mockHTTPServerMap[t.Name()]
+			assert.True(t, ok, "%s key not found in mockHTTPServerMap", t.Name())
+
+			var msgExists bool
+			for _, entry := range bulk.LogEntries {
+				if msgExists = strings.Contains(entry.Text, tc.name); msgExists {
+					assert.Equal(t, tc.severity, entry.Severity)
+					assert.Equal(t, fields["Category"], entry.Category)
+					assert.Equal(t, fields["ThreadId"], entry.ThreadID,
+						"expected %v, got %v", fields["MyThreadId"], entry.ThreadID)
+					assert.True(t, strings.Contains(entry.Text, fields["extra"].(string)),
+						"entry Text does not contain extra field", entry.Text, fields["extra"])
+					break
+				}
+			}
+			assert.True(t, msgExists, "no matching message found", string(bulk.ToJSON()))
+		})
+	}
 }

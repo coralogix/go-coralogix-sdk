@@ -150,7 +150,7 @@ func (manager *LoggerManager) Run() {
 			}
 		}
 
-		DebugLogger.Printf("Next buffer check is scheduled in %.1f seconds\n", NextSendInterval)
+		DebugLogger.Printf("Next buffer check is scheduled in %.1f seconds\n", NextSendInterval.Seconds())
 		time.Sleep(NextSendInterval)
 	}
 }
