@@ -60,9 +60,9 @@ func TestHook_Send(t *testing.T) {
 		},
 		{
 			name:     "test info",
-			severity: Level.ERROR,
+			severity: Level.INFO,
 			logfn: func(args ...interface{}) {
-				log.WithFields(fields).Error(args...)
+				log.WithFields(fields).Info(args...)
 			},
 		},
 		{
@@ -98,7 +98,7 @@ func TestHook_Send(t *testing.T) {
 		})
 	}
 
-	// test with caller\
+	// test with caller
 	log.SetReportCaller(true)
 	for _, tc := range testcases {
 		tc.name = fmt.Sprintf("%s_withReportCaller", tc.name)
@@ -115,7 +115,7 @@ func TestHook_Send(t *testing.T) {
 					assert.Equal(t, tc.severity, entry.Severity)
 					assert.Equal(t, fields["Category"], entry.Category)
 					assert.Equal(t, fields["ThreadId"], entry.ThreadID,
-						"expected %v, got %v", fields["MyThreadId"], entry.ThreadID)
+						"expected %v, got %v", fields["ThreadId"], entry.ThreadID)
 					assert.True(t, strings.Contains(entry.Text, fields["extra"].(string)),
 						"entry Text does not contain extra field", entry.Text, fields["extra"])
 					break
