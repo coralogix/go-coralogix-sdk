@@ -2,7 +2,7 @@ package coralogix
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strconv"
 	"time"
@@ -17,8 +17,14 @@ func SendRequest(Bulk *Bulk) int {
 	for Attempt := 1; uint(Attempt) <= HTTPSendRetryCount; Attempt++ {
 		DebugLogger.Println("About to send bulk to Coralogix server. Attempt number:", Attempt)
 
-		response, err := client.Post(LogURL, "application/json", bytes.NewBuffer(Bulk.ToJSON()))
+		request, err := http.NewRequest("POST", LogURL, bytes.NewBuffer(Bulk.ToJSON()))
+		if err != nil {
+			DebugLogger.Println("Can't create HTTP request:", err)
+			continue
+		}
+		request.Header = Headers
 
+		response, err := client.Do(request)
 		if err != nil {
 			DebugLogger.Println("Can't execute HTTP request:", err)
 			continue
@@ -53,7 +59,7 @@ func GetTimeSync() (bool, float64) {
 	}
 
 	if response.StatusCode == 200 {
-		response, _ := ioutil.ReadAll(response.Body)
+		response, _ := io.ReadAll(response.Body)
 		ServerTime, err := strconv.ParseFloat(string(response), 64)
 
 		if err != nil {
