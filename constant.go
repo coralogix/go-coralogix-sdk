@@ -1,6 +1,12 @@
 package coralogix
 
-import "time"
+import (
+	"bufio"
+	"net/http"
+	"net/textproto"
+	"strings"
+	"time"
+)
 
 const (
 	// MaxLogBufferSize is maximum log buffer size (default=128MiB)
@@ -49,4 +55,16 @@ var (
 
 	// TimeDeltaURL is the Coralogix time delay url endpoint
 	TimeDeltaURL string = GetEnv("CORALOGIX_TIME_DELTA_URL", "https://api.coralogix.com:443/sdk/v1/time")
+
+	// Headers is the list of headers added to each send logs request
+	Headers http.Header = func() http.Header {
+		headers := GetEnv("CORALOGIX_HEADERS", "")
+		tp := textproto.NewReader(bufio.NewReader(strings.NewReader(headers)))
+		mimeHeader, err := tp.ReadMIMEHeader()
+		if err != nil {
+			mimeHeader = map[string][]string{}
+		}
+		mimeHeader.Set("Content-Type", "application/json")
+		return http.Header(mimeHeader)
+	}()
 )
