@@ -11,7 +11,7 @@ import (
 // SendRequest send logs data to Coralogix server
 func SendRequest(Bulk *Bulk) int {
 	client := &http.Client{
-		Timeout: time.Duration(time.Duration(HTTPTimeout) * time.Second),
+		Timeout: time.Duration(HTTPTimeout) * time.Second,
 	}
 
 	for Attempt := 1; uint(Attempt) <= HTTPSendRetryCount; Attempt++ {
@@ -48,7 +48,7 @@ func GetTimeSync() (bool, float64) {
 	DebugLogger.Println("Syncing time with Coralogix server...")
 
 	client := &http.Client{
-		Timeout: time.Duration(time.Duration(TimeDelayTimeout) * time.Second),
+		Timeout: time.Duration(TimeDelayTimeout) * time.Second,
 	}
 
 	response, err := client.Get(TimeDeltaURL)
