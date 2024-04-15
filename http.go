@@ -51,8 +51,14 @@ func GetTimeSync() (bool, float64) {
 		Timeout: time.Duration(TimeDelayTimeout) * time.Second,
 	}
 
-	response, err := client.Get(TimeDeltaURL)
+	request, err := http.NewRequest(http.MethodGet, TimeDeltaURL, nil)
+	if err != nil {
+		DebugLogger.Println("Can't create HTTP request:", err)
+		return false, 0
+	}
+	request.Header = Headers
 
+	response, err := client.Do(request)
 	if err != nil {
 		DebugLogger.Println("Can't execute HTTP request:", err)
 		return false, 0
