@@ -17,7 +17,7 @@ func SendRequest(Bulk *Bulk) int {
 	for Attempt := 1; uint(Attempt) <= HTTPSendRetryCount; Attempt++ {
 		DebugLogger.Println("About to send bulk to Coralogix server. Attempt number:", Attempt)
 
-		request, err := http.NewRequest("POST", LogURL, bytes.NewBuffer(Bulk.ToJSON()))
+		request, err := http.NewRequest(http.MethodPost, LogURL, bytes.NewBuffer(Bulk.ToJSON()))
 		if err != nil {
 			DebugLogger.Println("Can't create HTTP request:", err)
 			continue
