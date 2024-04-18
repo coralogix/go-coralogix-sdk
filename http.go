@@ -11,13 +11,13 @@ import (
 // SendRequest send logs data to Coralogix server
 func SendRequest(Bulk *Bulk) int {
 	client := &http.Client{
-		Timeout: time.Duration(time.Duration(HTTPTimeout) * time.Second),
+		Timeout: time.Duration(HTTPTimeout) * time.Second,
 	}
 
 	for Attempt := 1; uint(Attempt) <= HTTPSendRetryCount; Attempt++ {
 		DebugLogger.Println("About to send bulk to Coralogix server. Attempt number:", Attempt)
 
-		request, err := http.NewRequest("POST", LogURL, bytes.NewBuffer(Bulk.ToJSON()))
+		request, err := http.NewRequest(http.MethodPost, LogURL, bytes.NewBuffer(Bulk.ToJSON()))
 		if err != nil {
 			DebugLogger.Println("Can't create HTTP request:", err)
 			continue
@@ -48,11 +48,17 @@ func GetTimeSync() (bool, float64) {
 	DebugLogger.Println("Syncing time with Coralogix server...")
 
 	client := &http.Client{
-		Timeout: time.Duration(time.Duration(TimeDelayTimeout) * time.Second),
+		Timeout: time.Duration(TimeDelayTimeout) * time.Second,
 	}
 
-	response, err := client.Get(TimeDeltaURL)
+	request, err := http.NewRequest(http.MethodGet, TimeDeltaURL, nil)
+	if err != nil {
+		DebugLogger.Println("Can't create HTTP request:", err)
+		return false, 0
+	}
+	request.Header = Headers
 
+	response, err := client.Do(request)
 	if err != nil {
 		DebugLogger.Println("Can't execute HTTP request:", err)
 		return false, 0
