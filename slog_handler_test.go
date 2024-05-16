@@ -1,6 +1,7 @@
 package coralogix
 
 import (
+	"errors"
 	"fmt"
 	"log/slog"
 	"strings"
@@ -29,10 +30,12 @@ func TestSlogHandler_AttrToMap(t *testing.T) {
 	m1 := map[string]any{}
 	attrToMap(m1, slog.String("1", "1"))
 	attrToMap(m1, slog.Int("2", 2))
+	attrToMap(m1, slog.Any("error", errors.New("test")))
 
 	assert.Equal(t, map[string]any{
-		"1": "1",
-		"2": int64(2),
+		"1":     "1",
+		"2":     int64(2),
+		"error": "test",
 	}, m1)
 
 	m2 := map[string]any{}
