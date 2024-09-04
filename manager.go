@@ -98,14 +98,14 @@ func (manager *LoggerManager) AddLogLine(Severity uint, Text interface{}, Catego
 
 // SendBulk send logs bulk to Coralogix
 func (manager *LoggerManager) SendBulk(SyncTime bool) bool {
-	if SyncTime {
-		manager.UpdateTimeDeltaInterval()
-	}
-
 	BufferLenToSend := manager.LogsBuffer.Len()
 	if BufferLenToSend < 1 {
 		DebugLogger.Println("buffer is empty, there is nothing to send!")
 		return false
+	}
+
+	if SyncTime {
+		manager.UpdateTimeDeltaInterval()
 	}
 
 	for manager.LogsBuffer.Size() > MaxLogChunkSize && BufferLenToSend > 1 {
