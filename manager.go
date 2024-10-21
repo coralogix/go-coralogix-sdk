@@ -73,7 +73,7 @@ func (manager *LoggerManager) AddLogLine(Severity uint, Text interface{}, Catego
 		}
 
 		NewLogRecord := Log{
-			float64(time.Now().UnixMilli()) + manager.TimeDelta,
+			float64(time.Now().UnixMicro()) + manager.TimeDelta,
 			Severity,
 			MessageToString(Text),
 			Category,
