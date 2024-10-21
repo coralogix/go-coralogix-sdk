@@ -76,7 +76,7 @@ func GetTimeSync() (bool, float64) {
 		ServerTime = ServerTime / 1e4
 		TimeDelta := ServerTime - float64(time.Now().UnixMilli())
 
-		return true, TimeDelta * 1e3 // convert to log microseconds, because timestamp is in microseconds.
+		return true, TimeDelta * 1e3 // convert to microseconds, because log timestamp is in microseconds.
 	}
 
 	DebugLogger.Println("Can't get server time")
