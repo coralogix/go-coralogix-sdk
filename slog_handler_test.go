@@ -120,9 +120,12 @@ func TestSlogHandler_Send(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			msg := fmt.Sprintf("%s (%s)", tc.name, t.Name())
 			tc.logfn(msg, attr)
-			time.Sleep(1 * time.Second)
-			bulk, ok := mockHTTPServerMap[t.Name()]
-			assert.True(t, ok, "%s key not found in mockHTTPServerMap", t.Name())
+
+			var bulk *Bulk
+			assert.Eventually(t, func() (ok bool) {
+				bulk, ok = mockHTTPServerMap[t.Name()]
+				return ok
+			}, 5*time.Second, 1*time.Second, "%s key not found in mockHTTPServerMap", t.Name())
 
 			var msgExists bool
 			for _, entry := range bulk.LogEntries {
