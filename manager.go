@@ -16,8 +16,9 @@ type LoggerManager struct {
 	LogsBuffer          LogBuffer     // Logs buffer
 	Credentials                       // Credentials for Coralogix account
 
-	lock   sync.WaitGroup
-	stopCh chan struct{}
+	lock       sync.WaitGroup
+	stopChOnce sync.Once
+	stopCh     chan struct{}
 }
 
 // NewLoggerManager configure new logger manager instance
@@ -34,6 +35,7 @@ func NewLoggerManager(PrivateKey string, ApplicationName string, SubsystemName s
 			SubsystemName,
 		},
 		sync.WaitGroup{},
+		sync.Once{},
 		make(chan struct{}),
 	}
 
@@ -165,7 +167,7 @@ func (manager *LoggerManager) Flush() {
 
 // Stop logger manager and kill threaded agent
 func (manager *LoggerManager) Stop() {
-	close(manager.stopCh)
+	manager.stopChOnce.Do(func() { close(manager.stopCh) })
 	manager.lock.Wait()
 }
 
