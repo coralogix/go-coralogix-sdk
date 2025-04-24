@@ -9,14 +9,16 @@ import (
 
 // LoggerManager is a logs buffer operations manager
 type LoggerManager struct {
-	SyncTime            bool           // Synchronize time with Coralogix servers
-	TimeDelta           float64        // Time difference between local machine and Coralogix servers
-	TimeDeltaLastUpdate int            // Last time-delta update time
-	Stopped             bool           // Is current logger manager stopped
-	SendInterval        time.Duration  // Send bulk logs interval
-	LogsBuffer          LogBuffer      // Logs buffer
-	Credentials                        // Credentials for Coralogix account
-	Lock                sync.WaitGroup // CoralogixLogger manager locker
+	SyncTime            bool          // Synchronize time with Coralogix servers
+	TimeDelta           float64       // Time difference between local machine and Coralogix servers
+	TimeDeltaLastUpdate int           // Last time-delta update time
+	SendInterval        time.Duration // Send bulk logs interval
+	LogsBuffer          LogBuffer     // Logs buffer
+	Credentials                       // Credentials for Coralogix account
+
+	lock       sync.WaitGroup
+	stopChOnce sync.Once
+	stopCh     chan struct{}
 }
 
 // NewLoggerManager configure new logger manager instance
@@ -25,7 +27,6 @@ func NewLoggerManager(PrivateKey string, ApplicationName string, SubsystemName s
 		SyncTime,
 		0,
 		0,
-		false,
 		0,
 		LogBuffer{},
 		Credentials{
@@ -34,9 +35,9 @@ func NewLoggerManager(PrivateKey string, ApplicationName string, SubsystemName s
 			SubsystemName,
 		},
 		sync.WaitGroup{},
+		sync.Once{},
+		make(chan struct{}),
 	}
-
-	LoggerManagerInstance.Lock.Add(1)
 
 	LoggerManagerInstance.SendInitMessage()
 	return LoggerManagerInstance
@@ -128,30 +129,34 @@ func (manager *LoggerManager) SendBulk(SyncTime bool) bool {
 
 // Run should work in separate thread and asynchronously operate with logs
 func (manager *LoggerManager) Run() {
-	var NextSendInterval time.Duration
+	manager.lock.Add(1)
+	defer manager.lock.Done()
 
-	defer manager.Lock.Done()
+	var nextSendInterval = func() time.Duration {
+		if manager.SendInterval > 0 {
+			return manager.SendInterval
+		}
 
+		if manager.LogsBuffer.Size() > (MaxLogChunkSize / 2) {
+			return FastSendSpeedInterval
+		} else {
+			return NormalSendSpeedInterval
+		}
+	}
+
+	tickerCh := time.After(nextSendInterval())
 	for {
-		if manager.Stopped {
+		select {
+		case <-manager.stopCh:
 			manager.Flush()
 			return
+		case <-tickerCh:
+			manager.SendBulk(manager.SyncTime)
+
+			nextInterval := nextSendInterval()
+			DebugLogger.Printf("Next buffer check is scheduled in %.1f seconds\n", nextInterval.Seconds())
+			tickerCh = time.After(nextSendInterval())
 		}
-
-		manager.SendBulk(manager.SyncTime)
-
-		if manager.SendInterval > 0 {
-			NextSendInterval = manager.SendInterval
-		} else {
-			if manager.LogsBuffer.Size() > (MaxLogChunkSize / 2) {
-				NextSendInterval = FastSendSpeedInterval
-			} else {
-				NextSendInterval = NormalSendSpeedInterval
-			}
-		}
-
-		DebugLogger.Printf("Next buffer check is scheduled in %.1f seconds\n", NextSendInterval.Seconds())
-		time.Sleep(NextSendInterval)
 	}
 }
 
@@ -162,8 +167,8 @@ func (manager *LoggerManager) Flush() {
 
 // Stop logger manager and kill threaded agent
 func (manager *LoggerManager) Stop() {
-	manager.Stopped = true
-	manager.Lock.Wait()
+	manager.stopChOnce.Do(func() { close(manager.stopCh) })
+	manager.lock.Wait()
 }
 
 // MessageToString convert log content to simple string

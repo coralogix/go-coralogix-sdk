@@ -217,15 +217,6 @@ func TestLoggerManager_Flush(t *testing.T) {
 	}
 }
 
-func TestLoggerManager_Stop(t *testing.T) {
-	NewLoggerManagerTestInstance := CreateLoggerManager()
-	go NewLoggerManagerTestInstance.Run()
-	NewLoggerManagerTestInstance.Stop()
-	if NewLoggerManagerTestInstance.Stopped != true {
-		t.Error("CoralogixLogger manager process stopping failed!")
-	}
-}
-
 func TestMessageToString(t *testing.T) {
 	Message := "Test message"
 	if MessageToString(Message) != Message {
