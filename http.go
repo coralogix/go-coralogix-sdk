@@ -14,33 +14,39 @@ func SendRequest(Bulk *Bulk) int {
 		Timeout: time.Duration(HTTPTimeout) * time.Second,
 	}
 
-	for Attempt := 1; uint(Attempt) <= HTTPSendRetryCount; Attempt++ {
-		DebugLogger.Println("About to send bulk to Coralogix server. Attempt number:", Attempt)
+	for {
+		statusCode, err := func() (int, error) {
+			DebugLogger.Println("About to send bulk to Coralogix server. Attempt number:", Retry.Attempt())
+			request, err := http.NewRequest(http.MethodPost, LogURL, bytes.NewBuffer(Bulk.ToJSON()))
+			if err != nil {
+				DebugLogger.Println("Can't create HTTP request:", err)
+				return 0, err
+			}
+			request.Header = Headers
 
-		request, err := http.NewRequest(http.MethodPost, LogURL, bytes.NewBuffer(Bulk.ToJSON()))
-		if err != nil {
-			DebugLogger.Println("Can't create HTTP request:", err)
-			continue
+			response, err := client.Do(request)
+			if err != nil {
+				DebugLogger.Println("Can't execute HTTP request:", err)
+				return 0, err
+			}
+
+			if response.StatusCode != 200 {
+				DebugLogger.Println("HTTP requests was failed with code:", response.StatusCode)
+			} else {
+				DebugLogger.Println("Successfully sent bulk to Coralogix server. Result is:", response.StatusCode)
+			}
+			return response.StatusCode, nil
+		}()
+		if err == nil {
+			return statusCode
 		}
-		request.Header = Headers
 
-		response, err := client.Do(request)
-		if err != nil {
-			DebugLogger.Println("Can't execute HTTP request:", err)
-			continue
-		}
-
-		if response.StatusCode != 200 {
-			DebugLogger.Println("HTTP requests was failed with code:", response.StatusCode)
+		if duration, retry := Retry.RetryDelay(); retry {
+			time.Sleep(duration)
 		} else {
-			DebugLogger.Println("Successfully sent bulk to Coralogix server. Result is:", response.StatusCode)
-			return response.StatusCode
+			return 0
 		}
-
-		time.Sleep(time.Duration(HTTPSendRetryInterval) * time.Second)
 	}
-
-	return 0
 }
 
 // GetTimeSync synchronize logs time with Coralogix servers time
