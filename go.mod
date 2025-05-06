@@ -3,6 +3,7 @@ module github.com/coralogix/go-coralogix-sdk
 go 1.19
 
 require (
+	github.com/jpillora/backoff v1.0.0
 	github.com/sirupsen/logrus v1.6.0
 	github.com/stretchr/testify v1.9.0
 )

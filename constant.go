@@ -6,6 +6,8 @@ import (
 	"net/textproto"
 	"strings"
 	"time"
+
+	"github.com/jpillora/backoff"
 )
 
 const (
@@ -67,4 +69,14 @@ var (
 		mimeHeader.Set("Content-Type", "application/json")
 		return http.Header(mimeHeader)
 	}()
+
+	Retry Retryer = &BackoffRetryer{
+		b: backoff.Backoff{
+			Min:    time.Second / 2,
+			Max:    10 * time.Second,
+			Factor: 1.5,
+			Jitter: true,
+		},
+		maxAttempts: HTTPSendRetryCount,
+	}
 )
