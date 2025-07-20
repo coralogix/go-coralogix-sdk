@@ -65,6 +65,7 @@ var (
 			mimeHeader = map[string][]string{}
 		}
 		mimeHeader.Set("Content-Type", "application/json")
+		mimeHeader.Set("Authorization", "Bearer "+GetEnv("PRIVATE_KEY", ""))
 		return http.Header(mimeHeader)
 	}()
 )
