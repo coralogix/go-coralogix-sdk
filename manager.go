@@ -123,7 +123,7 @@ func (manager *LoggerManager) SendBulk(SyncTime bool) bool {
 		LogsBulk.AddRecord(Record)
 	}
 
-	SendRequest(LogsBulk)
+	SendRequest(LogsBulk, manager.PrivateKey)
 	return true
 }
 

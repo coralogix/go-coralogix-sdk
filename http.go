@@ -9,7 +9,7 @@ import (
 )
 
 // SendRequest send logs data to Coralogix server
-func SendRequest(Bulk *Bulk) int {
+func SendRequest(Bulk *Bulk, privateKey string) int {
 	client := &http.Client{
 		Timeout: time.Duration(HTTPTimeout) * time.Second,
 	}
@@ -22,7 +22,12 @@ func SendRequest(Bulk *Bulk) int {
 			DebugLogger.Println("Can't create HTTP request:", err)
 			continue
 		}
-		request.Header = Headers
+
+		// Set headers with dynamic Authorization header
+		request.Header = Headers.Clone()
+		if privateKey != "" {
+			request.Header.Set("Authorization", "Bearer "+privateKey)
+		}
 
 		response, err := client.Do(request)
 		if err != nil {
