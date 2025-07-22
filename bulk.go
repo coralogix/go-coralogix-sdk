@@ -7,7 +7,6 @@ import (
 
 // Bulk describe logs batch format for Coralogix API
 type Bulk struct {
-	PrivateKey      string `json:"privateKey"`      // Coralogix private key
 	ApplicationName string `json:"applicationName"` // Your application name
 	SubsystemName   string `json:"subsystemName"`   // Subsystem name of your application
 	ComputerName    string `json:"computerName"`    // Current machine hostname
@@ -18,11 +17,10 @@ type Bulk struct {
 func NewBulk(Credentials Credentials) *Bulk {
 	Hostname, _ := os.Hostname()
 	return &Bulk{
-		Credentials.PrivateKey,
-		Credentials.ApplicationName,
-		Credentials.SubsystemName,
-		Hostname,
-		[]Log{},
+		ApplicationName: Credentials.ApplicationName,
+		SubsystemName:   Credentials.SubsystemName,
+		ComputerName:    Hostname,
+		LogEntries:      []Log{},
 	}
 }
 
