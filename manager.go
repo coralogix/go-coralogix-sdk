@@ -194,7 +194,7 @@ func MessageToString(Message interface{}) string {
 // UpdateTimeDeltaInterval get time difference between local machine and Coralogix servers
 func (manager *LoggerManager) UpdateTimeDeltaInterval() {
 	if (uint(int(time.Now().Unix()) - manager.TimeDeltaLastUpdate)) >= 60*SyncTimeUpdateInterval {
-		Result, TimeDelta := GetTimeSync()
+		Result, TimeDelta := GetTimeSync(manager.PrivateKey)
 		if Result {
 			manager.TimeDelta = TimeDelta
 			manager.TimeDeltaLastUpdate = int(time.Now().Unix())

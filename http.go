@@ -49,7 +49,7 @@ func SendRequest(Bulk *Bulk, privateKey string) int {
 }
 
 // GetTimeSync synchronize logs time with Coralogix servers time
-func GetTimeSync() (bool, float64) {
+func GetTimeSync(privateKey string) (bool, float64) {
 	DebugLogger.Println("Syncing time with Coralogix server...")
 
 	client := &http.Client{
@@ -61,7 +61,12 @@ func GetTimeSync() (bool, float64) {
 		DebugLogger.Println("Can't create HTTP request:", err)
 		return false, 0
 	}
-	request.Header = Headers
+
+	// Set headers with dynamic Authorization header
+	request.Header = Headers.Clone()
+	if privateKey != "" {
+		request.Header.Set("Authorization", "Bearer "+privateKey)
+	}
 
 	response, err := client.Do(request)
 	if err != nil {

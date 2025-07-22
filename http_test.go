@@ -57,7 +57,7 @@ func TestSendRequestErrorResponseStatus(t *testing.T) {
 }
 
 func TestGetTimeSync(t *testing.T) {
-	Status, TimeDelta := GetTimeSync()
+	Status, TimeDelta := GetTimeSync(GetEnv("PRIVATE_KEY", "7569303a-6269-4d2c-bf14-1aec9b1786a4"))
 	if Status == false || reflect.TypeOf(TimeDelta).Kind() != reflect.Float64 {
 		t.Error("Time synchronization failed!")
 	}
