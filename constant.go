@@ -51,10 +51,10 @@ const (
 
 var (
 	// LogURL is the Coralogix logs url endpoint
-	LogURL string = GetEnv("CORALOGIX_LOG_URL", "https://api.coralogix.com:443/api/v1/logs")
+	LogURL string = GetEnv("CORALOGIX_LOG_URL", "https://ingress.eu1.coralogix.com:443/api/v1/logs")
 
 	// TimeDeltaURL is the Coralogix time delay url endpoint
-	TimeDeltaURL string = GetEnv("CORALOGIX_TIME_DELTA_URL", "https://api.coralogix.com:443/sdk/v1/time")
+	TimeDeltaURL string = GetEnv("CORALOGIX_TIME_DELTA_URL", "https://ingress.eu1.coralogix.com:443/sdk/v1/time")
 
 	// Headers is the list of headers added to each send logs request
 	Headers http.Header = func() http.Header {

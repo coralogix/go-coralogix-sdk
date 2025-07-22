@@ -1,5 +1,5 @@
 # Coralogix Go SDK
-
+## Deprecation Notics: this code will be derecated in favore of [OTEl SDK](https://github.com/open-telemetry/opentelemetry-go?tab=readme-ov-file), and will no longer be supported, as of 22.9.2025
 [![goreportcard](https://goreportcard.com/badge/github.com/coralogix/go-coralogix-sdk)](https://goreportcard.com/report/github.com/coralogix/go-coralogix-sdk)
 [![Go Reference](https://pkg.go.dev/badge/github.com/coralogix/go-coralogix-sdk.svg)](https://pkg.go.dev/github.com/coralogix/go-coralogix-sdk)
 [![license](https://img.shields.io/github/license/coralogix/go-coralogix-sdk.svg)](https://raw.githubusercontent.com/coralogix/go-coralogix-sdk/master/LICENSE)

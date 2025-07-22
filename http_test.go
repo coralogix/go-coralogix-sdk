@@ -18,7 +18,7 @@ func TestSendRequestSuccess(t *testing.T) {
 		"",
 		0,
 	})
-	HTTPStatus := SendRequest(BulkToSend, GetEnv("PRIVATE_KEY", "7569303a-6269-4d2c-bf14-1aec9b1786a4"))
+	HTTPStatus := SendRequest(BulkToSend, GetEnv("PRIVATE_KEY", "dummy-key-123"))
 	if HTTPStatus != 200 {
 		t.Error("Logs bulk sending failed!")
 	}
@@ -30,7 +30,7 @@ func TestSendRequestPostFail(t *testing.T) {
 	SetDebug(true)
 	BulkToSend := CreateBulk()
 	BulkToSend.AddRecord(*InvalidLogMessage())
-	HTTPStatus := SendRequest(BulkToSend, GetEnv("PRIVATE_KEY", "7569303a-6269-4d2c-bf14-1aec9b1786a4"))
+	HTTPStatus := SendRequest(BulkToSend, GetEnv("PRIVATE_KEY", "dummy-key-123"))
 	if HTTPStatus > 0 {
 		t.Error("Sending of invalid request should be failed!")
 	}
@@ -50,14 +50,14 @@ func TestSendRequestErrorResponseStatus(t *testing.T) {
 		"",
 		0,
 	})
-	HTTPStatus := SendRequest(BulkToSend, GetEnv("PRIVATE_KEY", "7569303a-6269-4d2c-bf14-1aec9b1786a4"))
+	HTTPStatus := SendRequest(BulkToSend, GetEnv("PRIVATE_KEY", "dummy-key-123"))
 	if HTTPStatus == 0 {
 		t.Error("Logs bulk was successful!")
 	}
 }
 
 func TestGetTimeSync(t *testing.T) {
-	Status, TimeDelta := GetTimeSync(GetEnv("PRIVATE_KEY", "7569303a-6269-4d2c-bf14-1aec9b1786a4"))
+	Status, TimeDelta := GetTimeSync(GetEnv("PRIVATE_KEY", "dummy-key-123"))
 	if Status == false || reflect.TypeOf(TimeDelta).Kind() != reflect.Float64 {
 		t.Error("Time synchronization failed!")
 	}
